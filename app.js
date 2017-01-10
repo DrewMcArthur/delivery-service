@@ -50,9 +50,11 @@ io.on('connection', function(socket){
 });
  
 // routes
+/* don't think i need this because i can just put another index inside /public/signup/ for the same effect
 app.get("/signup", function(req,res){
 	res.render("/public/signup.html");
 });
+*/
 
 //this hosts the files located in the ./public directory
 app.use(express.static(__dirname + '/public'));
