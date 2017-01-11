@@ -11,17 +11,18 @@
 	<h3> Enter your information to create a new user </h3>
 	<form class='user-signup-form'>
 		<label for='name'>Name: </label>
-			<input type='text' name='name' placeholder='Drew McArthur'/>
+			<input class='name' type='text' name='name' placeholder='Drew McArthur'/>
 		<label for='password'>Password: </label>
-			<input type='password' name='password' placeholder='password'/>
+			<input class='password' type='password' name='password' placeholder='password'/>
 		<br/>
 		<label for='email'>Email: </label>
-			<input type='text' name='email' placeholder='drewmcarthur1@gmail.com'/>
+			<input class='email' type='email' name='email' placeholder='drewmcarthur1@gmail.com'/>
 		<label for='phone'>Phone Number: </label>
-			<input type='text' name='phone' placeholder='5085429811'/>
-		<p>Only one of these is required, but I do need some way to contact you.</p>
+			<input class='phone' type='tel' name='phone' placeholder='5085429811'/>
+			<p class = 'phone errmsg'>This doesn't seem to be a valid number.</p>
+		<p class='errmsg'>Only one of these is required, but I do need some way to contact you.</p>
 		<label for='room'>Room Number: </label>
-			<input type='text' name='room' placeholder='Babbit 15'/>
+			<input class='room' type='text' name='room' placeholder='Babbit 15'/>
 		<p>Optional, used to deliver your groceries.  If you don't include this, then you must pick them up from my suite.</p>
 	</form>
 	<button class='submit'>Submit</button>
