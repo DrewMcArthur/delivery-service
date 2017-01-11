@@ -11,5 +11,12 @@ $(document).on('ready',function(){
 			data.push($(children[i]).val());
 
 		// do something with the password and send the data to the server
+		socket.emit('signup', data);
+	});
+	socket.on('signuperr', function(err) {
+		console.log("Signup error: " + err);
+	});
+	socket.on('signupsuccess', function(){
+		console.log("Signup Success!");
 	});
 });
