@@ -38,10 +38,10 @@ io.on('connection', function(socket){
 				data[1] = hash;
 
 				// sql query to add user with [data] to user table
-				var signupquery = "INSERT INTO user VALUES (";
-				for (datum in data) {
-					signupquery += data[datum];
-					signupquery += (i + 1 == data.length ? ");" : ", ");
+				var signupquery = "INSERT INTO user(username, password, email, phone, room) VALUES (";
+				for (var i in data) {
+					signupquery += "'" + data[i] + "'";
+					signupquery += (i == data.length - 1 ? ");" : ", ");
 				}
 
 				console.log("Adding new user to database with query: ");
@@ -56,6 +56,7 @@ io.on('connection', function(socket){
 						socket.emit('signupsuccess');
 					} else {
 						// if there was an error signing the user up, forward the error to the client
+						console.log("Signup Error: Database Error: " + err);
 						socket.emit('signuperror', "Database Error: " + err);
 					}
 				});
@@ -80,4 +81,8 @@ http.listen(80, function(){
     console.log("Server is running on port 80");      
 });
 
-db.end();
+process.on( 'SIGINT', function() {
+	console.log( "\nGracefully shutting down from SIGINT (Ctrl-C)" );
+	db.end();
+	process.exit( );
+});

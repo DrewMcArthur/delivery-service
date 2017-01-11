@@ -13,7 +13,7 @@ $(document).on('ready',function(){
 		// do something with the password and send the data to the server
 		socket.emit('signup', data);
 	});
-	socket.on('signuperr', function(err) {
+	socket.on('signuperror', function(err) {
 		console.log("Signup error: " + err);
 	});
 	socket.on('signupsuccess', function(){
