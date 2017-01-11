@@ -3,6 +3,7 @@
 // delivery service
 
 // requirements
+var fs = require('fs');
 var express = require('express');
 var app = express();
 var http = require('http').Server(app);
@@ -32,8 +33,7 @@ io.on('connection', function(socket){
 	socket.on('signup', function(data){
 		bcrypt.hash(data[1], saltRounds, function(err, hash) {
 			if (err) {
-				console.log("Error hashing password: " + err);
-				socket.emit('signuperror', "Error hashing password: " + err);
+				logger("Error hashing password: " + err); socket.emit('signuperror', "Error hashing password: " + err);
 			} else {
 				data[1] = hash;
 
@@ -44,19 +44,18 @@ io.on('connection', function(socket){
 					signupquery += (i == data.length - 1 ? ");" : ", ");
 				}
 
-				console.log("Adding new user to database with query: ");
-				console.log("	" + signupquery);
+				logger("Adding new user to database with query: ");
+				logger("	" + signupquery);
 				// add user to user table with [data]
 				db.query(signupquery, function(err, rows, fields) {
 					if (!err) {
 						// set user_id
-						console.log("signup success, printing rows then fields");
-						console.log(rows);
-						console.log(fields);
-						socket.emit('signupsuccess');
+						logger("Signup Success: ");
+						logger(rows);
+						socket.emit('signupsuccess', rows);
 					} else {
 						// if there was an error signing the user up, forward the error to the client
-						console.log("Signup Error: Database Error: " + err);
+						logger("Signup Error: Database Error: " + err);
 						socket.emit('signuperror', "Database Error: " + err);
 					}
 				});
@@ -64,6 +63,18 @@ io.on('connection', function(socket){
 		});
 	});
 });
+
+// functions
+function logger(message){ //log to the console and a hard file
+	console.log(message);
+	fs.appendFile(
+		__dirname + "/messages.log", 
+		new Date().toUTCString() + "	" + message + "\n", 
+		function(err){ 
+			if(err) { console.log(err); } 
+		}
+	);
+}
  
 // routes
 /* don't think i need this because i can just put another index inside /public/signup/ for the same effect
@@ -78,11 +89,11 @@ app.use(express.static(__dirname + '/public'));
 //listen for requests at localhost:80
 http.listen(80, function(){ 
     //callback function, completely optional.   
-    console.log("Server is running on port 80");      
+    logger("Server is running on port 80");      
 });
 
 process.on( 'SIGINT', function() {
-	console.log( "\nGracefully shutting down from SIGINT (Ctrl-C)" );
+	logger( "\nGracefully shutting down from SIGINT (Ctrl-C)" );
 	db.end();
 	process.exit( );
 });

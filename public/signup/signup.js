@@ -16,7 +16,7 @@ $(document).on('ready',function(){
 	socket.on('signuperror', function(err) {
 		console.log("Signup error: " + err);
 	});
-	socket.on('signupsuccess', function(){
-		console.log("Signup Success!");
+	socket.on('signupsuccess', function(rows){
+		console.log("Signup Success! " + rows);
 	});
 });
