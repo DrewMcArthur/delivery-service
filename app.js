@@ -5,8 +5,9 @@
 // requirements
 var express = require('express');
 var app = express();
+var http = require('http').Server(app);
 var mysql = require('mysql');
-var io = require('socketio')(http);
+var io = require('socket.io')(http);
 var bcrypt = require('bcrypt');
 
 // variables
@@ -74,7 +75,7 @@ app.get("/signup", function(req,res){
 app.use(express.static(__dirname + '/public'));
 
 //listen for requests at localhost:80
-app.listen(80, function(){ 
+http.listen(80, function(){ 
     //callback function, completely optional.   
     console.log("Server is running on port 80");      
 });

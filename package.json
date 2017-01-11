@@ -10,6 +10,8 @@
   "dependencies": {
     "bcrypt": "^1.0.2",
     "express": "^4.14.0",
+    "http": "0.0.0",
+    "https": "^1.0.0",
     "node-mysql": "^0.4.2",
     "socket.io": "^1.7.2"
   }
