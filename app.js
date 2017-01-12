@@ -6,10 +6,19 @@
 var fs = require('fs');
 var express = require('express');
 var app = express();
+var session = require('express-session');
 var http = require('http').Server(app);
 var mysql = require('mysql');
 var io = require('socket.io')(http);
 var bcrypt = require('bcrypt');
+
+app.use(session({
+  secret: 'keyboard doggo pupper',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } // change this once i get HTTPS running
+}));
+
 
 // variables
 const saltRounds = 5;
@@ -30,7 +39,7 @@ io.on('connection', function(socket){
 	logger("    " + socket);
 
 	// user's id, defined when the user signs up or logs in.
-	var user_id = 0;
+	req.session.user_id = 0;
 
 	// communications for user signup
 	socket.on('signup', function(data){
@@ -53,7 +62,7 @@ io.on('connection', function(socket){
 				db.query(signupquery, function(err, rows) {
 					if (!err) {
 						// set user_id
-						user_id = rows.insertId;
+						req.session.user_id = rows.insertId;
 						logger("Signup Success: ");
 						logger(rows.insertId);
 						socket.emit('signupsuccess', rows.insertId);
@@ -92,7 +101,7 @@ io.on('connection', function(socket){
 						socket.emit('loginerror', "invalidcredentials");
 					} else {
 						logger("User " + id + " logged in.");
-						user_id = id;
+						req.session.user_id = id;
 						socket.emit('loginsuccess', id);
 					}
 				});
@@ -101,7 +110,7 @@ io.on('connection', function(socket){
 	});
 	socket.on('logout', function() {
 		logger("User " + id + " logged out.");
-		user_id = 0;
+		req.session.user_id = 0;
 		socket.emit('logoutsuccess');
 	});
 	socket.on('disconnect', function() {

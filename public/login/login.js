@@ -30,6 +30,7 @@ $(document).on('ready',function(){
 	});
 	socket.on('loginsuccess', function(rows){
 		console.log("Login Success! " + rows.toString());
+		window.location.replace("/");
 	});
 });
 
