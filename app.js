@@ -25,9 +25,12 @@ db.connect();
 
 // defining socket.io connection
 io.on('connection', function(socket){
+	
+	logger("Connection established: ");
+	logger("    " + socket);
 
 	// user's id, defined when the user signs up or logs in.
-	var user_id;
+	var user_id = 0;
 
 	// communications for user signup
 	socket.on('signup', function(data){
@@ -86,12 +89,21 @@ io.on('connection', function(socket){
 						logger("Login Error: Incorrect Password");
 						socket.emit('loginerror', "invalidcredentials");
 					} else {
-						logger("User " + id  + " logged in.");
+						logger("User " + id + " logged in.");
+						user_id = id;
 						socket.emit('loginsuccess', id);
 					}
 				});
 			}
 		});
+	});
+	socket.on('logout', function() {
+		logger("User " + id + " logged out.");
+		user_id = 0;
+		socket.emit('logoutsuccess');
+	});
+	socket.on('disconnect', function() {
+		logger("User " + id + " disconnected.");
 	});
 });
 
