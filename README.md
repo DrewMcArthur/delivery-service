@@ -12,3 +12,5 @@ Uses Node.js to implement a store of items, which can be added by users.  A user
 * User Login
 
 * Make signup prettier, maybe sections that scroll
+
+* Make script that will restart server within screen session
