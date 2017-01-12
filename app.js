@@ -67,6 +67,7 @@ io.on('connection', function(socket){
 		});
 	});
 	socket.on('login', function(data){
+		// get hashed password from database
 		var q = "SELECT id,password FROM user WHERE email='" + data[0] + "';";
 		db.query(q, function(err, rows){
 			if (err) {
@@ -80,6 +81,7 @@ io.on('connection', function(socket){
 			} else { 
 				var hash = rows[0].password;
 				var id = rows[0].id;
+				// check if thats the right password
 				bcrypt.compare(data[1], hash, function(err, res){
 					if (err) {
 						logger("Login Error: ");
