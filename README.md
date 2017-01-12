@@ -5,6 +5,10 @@ Uses Node.js to implement a store of items, which can be added by users.  A user
 
 # TODO:
 
+* add second password field at signup
+
 * Validate user input at signup
 
 * User Login
+
+* Make signup prettier, maybe sections that scroll
