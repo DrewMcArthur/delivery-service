@@ -62,6 +62,21 @@ io.on('connection', function(socket){
 			}
 		});
 	});
+	socket.on('login', function(data){
+		var q = "SELECT password FROM user WHERE email='" + data[0] + "';";
+		db.query(q, function(err, rows){
+			logger(rows);
+			bcrypt.compare(data[1], rows, function(err, res){
+				if (err) {
+					socket.emit('loginerr', err);
+				} else if (!res) {
+					socket.emit('loginerr', "incorrectpass");
+				} else {
+					socket.emit('loginsuccess', id);
+				}
+			});
+		});
+	});
 });
 
 // functions
