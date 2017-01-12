@@ -17,9 +17,16 @@ $(document).on('ready',function(){
 			socket.emit('login', data);
 	});
 	socket.on('loginerror', function(err) {
-		console.log("Login error: " + err);
-		var errormess = "<p class='errmsg'>Invalid login, please try again.</p>";
-		$('input.password').after(errormess);
+		var errormess;
+		if (err == "invalidcredentials") {
+			console.log("Login error: " + err);
+			errormess = "<p class='errmsg'>Invalid login, please try again.</p>";
+		} else {
+			console.log("server error on login: " + err);
+			errormess = "<p class='errmsg'>Server error, please try again or contact Drew (drewmcarthur1@gmail.com)</p>";
+		}
+		$('input.password').after(errormess)
+		$('.errmsg').show();
 	});
 	socket.on('loginsuccess', function(rows){
 		console.log("Login Success! " + rows.toString());

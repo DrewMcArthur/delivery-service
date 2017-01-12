@@ -47,12 +47,13 @@ io.on('connection', function(socket){
 				logger("Adding new user to database with query: ");
 				logger("	" + signupquery);
 				// add user to user table with [data]
-				db.query(signupquery, function(err, rows, fields) {
+				db.query(signupquery, function(err, rows) {
 					if (!err) {
 						// set user_id
+						user_id = rows.insertId;
 						logger("Signup Success: ");
-						logger(rows);
-						socket.emit('signupsuccess', rows);
+						logger(rows.insertId);
+						socket.emit('signupsuccess', rows.insertId);
 					} else {
 						// if there was an error signing the user up, forward the error to the client
 						logger("Signup Error: Database Error: " + err);
@@ -63,18 +64,33 @@ io.on('connection', function(socket){
 		});
 	});
 	socket.on('login', function(data){
-		var q = "SELECT password FROM user WHERE email='" + data[0] + "';";
+		var q = "SELECT id,password FROM user WHERE email='" + data[0] + "';";
 		db.query(q, function(err, rows){
-			logger(rows);
-			bcrypt.compare(data[1], rows, function(err, res){
-				if (err) {
-					socket.emit('loginerr', err);
-				} else if (!res) {
-					socket.emit('loginerr', "incorrectpass");
-				} else {
-					socket.emit('loginsuccess', id);
-				}
-			});
+			if (err) {
+				logger("Login Error: ");
+				logger("    " + err);
+				socket.emit("loginerror", err.toString());
+			} else if (rows.length == 0) {
+				// no email exists
+				logger("Login Error: Invalid Email");
+				socket.emit('loginerror', 'invalidcredentials');
+			} else { 
+				var hash = rows[0].password;
+				var id = rows[0].id;
+				bcrypt.compare(data[1], hash, function(err, res){
+					if (err) {
+						logger("Login Error: ");
+						logger("    " + err);
+						socket.emit('loginerror', err.toString());
+					} else if (!res) {
+						logger("Login Error: Incorrect Password");
+						socket.emit('loginerror', "invalidcredentials");
+					} else {
+						logger("User " + id  + " logged in.");
+						socket.emit('loginsuccess', id);
+					}
+				});
+			}
 		});
 	});
 });
@@ -84,7 +100,7 @@ function logger(message){ //log to the console and a hard file
 	console.log(message);
 	fs.appendFile(
 		__dirname + "/messages.log", 
-		new Date().toUTCString() + "	" + message + "\n", 
+		new Date().toUTCString() + "	" + message.toString() + "\n", 
 		function(err){ 
 			if(err) { console.log(err); } 
 		}
