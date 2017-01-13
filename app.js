@@ -36,7 +36,7 @@ var db = mysql.createConnection({
     password : 'password',
     database : 'deliveryapp'
 });
-handleDisconnect();
+handleDisconnect(db);
 
 // communications for user signup
 app.post('/signup', function(req, res){
@@ -115,6 +115,17 @@ app.get('/logout', function(req, res) {
 	res.redirect('/');
 });
 
+// middleware
+var authUser = function(req, res, next) {
+	// anywhere they try to go, if they aren't logged in,
+	if (!req.session.user_id) {
+		// send them to the login page
+		return res.redirect('/login');
+	} else { 
+		next();
+	}
+}
+
 app.use(authUser);
 
 //this hosts the files located in the ./public directory
@@ -132,16 +143,6 @@ process.on( 'SIGINT', function() {
 	process.exit( );
 });
 
-// middleware
-var authUser = function(req, res, next) {
-	// anywhere they try to go, if they aren't logged in,
-	if (!req.session.user_id) {
-		// send them to the login page
-		return res.redirect('/login');
-	} else { 
-		next();
-	}
-}
 
 // functions
 function logger(message){ //log to the console and a hard file
@@ -154,9 +155,7 @@ function logger(message){ //log to the console and a hard file
 		}
 	);
 }
-function handleDisconnect(){
-	// connect to database
-	db = mysql.createConnection(sqlconnarg); 
+function handleDisconnect(db){
 	// The server is either down or restarting (takes a while sometimes).
 	db.connect(function(err) {              
 		if(err) {                                     
