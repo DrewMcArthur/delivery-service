@@ -1,14 +1,19 @@
+body {
+	margin: auto;
+	max-width: 768px;
+	width: 100%;
+}
 h1 {
     font-family: ubuntu;
 }
 .errmsg {
-	font-color: red;
+	color: red;
 	display: none;
 }
 
 input {
 	border-width: 1px;
-	border-radius 4px;
+	border-radius: 4px;
 }
 
 input.invalid, :invalid {
