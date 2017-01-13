@@ -143,6 +143,8 @@ app.get('/logout', function(req, res) {
 
 app.get(/\/[(login)(info)]/, function(req, res) {
 	var uri = req.url.substr(1);
+	if (uri.match(/.*\//))
+		uri = uri.substr(0, uri.length -1);
 	res.render(uri, {title: uri});
 });
 
