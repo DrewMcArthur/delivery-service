@@ -7,3 +7,6 @@ input {
 .sign-in-header {
 	text-align: center;
 }
+.has-error {
+	color: #AB3C3C;
+}
