@@ -11,9 +11,6 @@ var http = require('http').Server(app);
 var mysql = require('mysql');
 var bcrypt = require('bcrypt');
 var bodyParser = require('body-parser');
-var ejs = require('ejs');
-	ejs.open	=	'{{'; 
-	ejs.close	=	'}}';
 
 // sql connection info
 var db = mysql.createConnection({
@@ -55,10 +52,8 @@ var authUser = function(req, res, next) {
 }
 app.use(authUser);
 
-app.set("view options", {layout: false});  //This one does the trick for rendering static html
-app.engine('html', require('ejs').renderFile); 
 app.set('views', __dirname + "/public");
-app.set('view engine', 'html');
+app.set('view engine', 'pug');
 
 //this hosts the files located in the ./public directory
 app.use(express.static(__dirname + '/public'));
@@ -147,7 +142,7 @@ app.get('/logout', function(req, res) {
 });
 
 app.get(/\/[(login)(info)]/, function(req, res) {
-	res.render(req.url.substr(1) + '.html');
+	res.render(req.url.substr(1));
 });
 
 //listen for requests at localhost:80
