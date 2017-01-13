@@ -142,7 +142,8 @@ app.get('/logout', function(req, res) {
 });
 
 app.get(/\/[(login)(info)]/, function(req, res) {
-	res.render(req.url.substr(1));
+	var uri = req.url.substr(1);
+	res.render(uri, {title: uri});
 });
 
 //listen for requests at localhost:80

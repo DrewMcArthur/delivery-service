@@ -1,16 +1,14 @@
-doctype html
-html
-head
-	title="Log In - Drew's Delivery"
-	include includes/head.pug
+extends template
+
+block head
+	title Log In - Drew's Delivery
 	link(rel="stylesheet" type="text/css" href="/style/login.css")
-	script(type="text/javascript" src="login.js"/script)
-body
-	include includes/header.pug
+	script(type="text/javascript" src="/js/login.js")
+
+block content
 	h3 Enter your information to log in.
 	form(class='user-login-form' action='/login' method='post')
 		input(class='email' type='email' name='email' placeholder='drewmcarthur1@gmail.com')
 		br
 		input(class='password' type='password' name='password' placeholder='password')
 		input(type='submit' value='Log In')
-	include includes/footer.pug
