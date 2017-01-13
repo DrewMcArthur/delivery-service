@@ -9,7 +9,6 @@ var app = express();
 var session = require('express-session');
 var http = require('http').Server(app);
 var mysql = require('mysql');
-var io = require('socket.io')(http);
 var bcrypt = require('bcrypt');
 var bodyParser = require('body-parser');
 

@@ -15,7 +15,6 @@
     "fs": "0.0.1-security",
     "http": "0.0.0",
     "https": "^1.0.0",
-    "node-mysql": "^0.4.2",
-    "socket.io": "^1.7.2"
+    "node-mysql": "^0.4.2"
   }
 }
