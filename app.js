@@ -11,6 +11,9 @@ var http = require('http').Server(app);
 var mysql = require('mysql');
 var bcrypt = require('bcrypt');
 var bodyParser = require('body-parser');
+var ejs = require('ejs');
+	ejs.open	=	'{{'; 
+	ejs.close	=	'}}';
 
 // sql connection info
 var db = mysql.createConnection({
@@ -50,8 +53,12 @@ var authUser = function(req, res, next) {
 	else
 		return next();
 }
-
 app.use(authUser);
+
+app.set("view options", {layout: false});  //This one does the trick for rendering static html
+app.engine('html', require('ejs').renderFile); 
+app.set('views', __dirname + "/public");
+app.set('view engine', 'html');
 
 //this hosts the files located in the ./public directory
 app.use(express.static(__dirname + '/public'));
@@ -139,12 +146,17 @@ app.get('/logout', function(req, res) {
 	res.redirect('/');
 });
 
+app.get(/\/[(login)(info)]/, function(req, res) {
+	res.render(req.url.substr(1) + '.html');
+});
+
 //listen for requests at localhost:80
 http.listen(80, function(){ 
     //callback function, completely optional.   
     logger("Server is running on port 80");      
 });
 
+// handles when i stop server by CTRL-C
 process.on( 'SIGINT', function() {
 	logger( "\nGracefully shutting down from SIGINT (Ctrl-C)" );
 	db.end();
