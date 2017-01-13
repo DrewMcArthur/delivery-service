@@ -36,7 +36,7 @@ var db = mysql.createConnection({
     password : 'password',
     database : 'deliveryapp'
 });
-db.connect();
+handleDisconnect();
 
 // communications for user signup
 app.post('/signup', function(req, res){
@@ -111,22 +111,12 @@ app.post('/login', function(req, res){
 });
 app.get('/logout', function(req, res) {
 	logger("User " + id + " logged out.");
-	req.session.user_id = 0;
+	req.session.user_id = null;
 	res.redirect('/');
 });
 
-// functions
-function logger(message){ //log to the console and a hard file
-	console.log(message);
-	fs.appendFile(
-		__dirname + "/messages.log", 
-		new Date().toUTCString() + "	" + message.toString() + "\n", 
-		function(err){ 
-			if(err) { console.log(err); } 
-		}
-	);
-}
- 
+app.use(authUser);
+
 //this hosts the files located in the ./public directory
 app.use(express.static(__dirname + '/public'));
 
@@ -141,3 +131,52 @@ process.on( 'SIGINT', function() {
 	db.end();
 	process.exit( );
 });
+
+// middleware
+var authUser = function(req, res, next) {
+	// anywhere they try to go, if they aren't logged in,
+	if (!req.session.user_id) {
+		// send them to the login page
+		return res.redirect('/login');
+	} else { 
+		next();
+	}
+}
+
+// functions
+function logger(message){ //log to the console and a hard file
+	console.log(message);
+	fs.appendFile(
+		__dirname + "/messages.log", 
+		new Date().toUTCString() + "	" + message.toString() + "\n", 
+		function(err){ 
+			if(err) { console.log(err); } 
+		}
+	);
+}
+function handleDisconnect(){
+	// connect to database
+	db = mysql.createConnection(sqlconnarg); 
+	// The server is either down or restarting (takes a while sometimes).
+	db.connect(function(err) {              
+		if(err) {                                     
+			logger(serverMessage('error when connecting to db:'+ err));
+			// We introduce a delay before attempting to reconnect,
+			setTimeout(handleDisconnect, 2000); 
+			// to avoid a hot loop, and to allow our node script to
+		}                                     
+	// process asynchronous requests in the meantime.
+	});                                     
+	// If you're also serving http, display a 503 error.
+	db.on('error', function(err) {
+		logger(serverMessage('db error', err));
+		// Connection to the MySQL server is usually
+		if(err.code === 'PROTOCOL_CONNECTION_LOST') { 
+			// lost due to either server restart, or a
+			handleDisconnect();                         
+		// connnection idle timeout (the wait_timeout server variable configures this)
+		} else {                                      
+			throw err;                                  
+		}
+	});
+}
