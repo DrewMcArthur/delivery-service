@@ -76,7 +76,7 @@ app.post('/signup', function(req, res){
 			// sql query to add user with [data] to user table
 			var signupquery = "INSERT INTO user(username, password, email, phone, room) VALUES (";
 			for (var i in data) {
-				signupquery += "'" + data[i] + "'";
+				signupquery += "'" + mysql.escape(data[i]) + "'";
 				signupquery += (i == data.length - 1 ? ");" : ", ");
 			}
 
@@ -103,7 +103,7 @@ app.post('/login', function(req, res){
 	var email = req.body.email;
 	var pass = req.body.password;
 	// get hashed password from database
-	var q = "SELECT id,password FROM user WHERE email='" + email + "';";
+	var q = "SELECT id,password FROM user WHERE email='" + mysql.escape(email) + "';";
 	db.query(q, function(err, rows){
 		if (err) {
 			logger("Login Error: ");
@@ -141,12 +141,20 @@ app.get('/logout', function(req, res) {
 	res.redirect('/');
 });
 
+app.get('/login/:error', function(req, res) {
+	console.log(JSON.stringify(req.params));
+	res.render('login');
+});
+/*
 app.get(/\/[(login)(info)]/, function(req, res) {
 	var uri = req.url.substr(1);
 	if (uri.match(/.*\//))
 		uri = uri.substr(0, uri.length -1);
-	res.render(uri, {title: uri});
+	console.log(req.url);
+	console.log(req.params.toString());
+	res.render(uri, {title: uri, error: req.params.error});
 });
+*/
 
 //listen for requests at localhost:80
 http.listen(80, function(){ 

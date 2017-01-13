@@ -1,3 +1,9 @@
 input {
-	margin-bottom: 5px;
+	margin-bottom: 15px;
+}
+.login-btns {
+	padding: 5px;
+}
+.sign-in-header {
+	text-align: center;
 }

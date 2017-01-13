@@ -7,13 +7,11 @@ block head
 
 block content
 	form.form-signin(role='form' action='/login' method='post')
-		h2.form-signin-heading Please sign in
+		h2.form-signin-heading.sign-in-header Log In or Sign Up
 		input.form-control.email(autofocus='' required='' type='email' name='email' placeholder='drewmcarthur1@gmail.com')
 		input.form-control.password(type='password' required='' name='password' placeholder='password')
-		.container
-			.row
-				div.col-xs-6
-					button.btn.btn-lg.btn-primary.btn-block(type='submit') Log In
-				div.col-xs-6
-					button.btn.btn-lg.btn-primary.btn-block.sign-in-btn-1 Sign In
+		div.col-xs-6.login-btns
+			button.btn.btn-lg.btn-primary.btn-block(type='submit') Log In
+		div.col-xs-6.login-btns
+			button.btn.btn-lg.btn-primary.btn-block.sign-in-btn-1 Sign In
 				
