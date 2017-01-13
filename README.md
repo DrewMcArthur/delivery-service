@@ -9,8 +9,8 @@ Uses Node.js to implement a store of items, which can be added by users.  A user
 
 * Validate user input at signup
 
-* User Login
-
 * Make signup prettier, maybe sections that scroll
+
+* bootstrap!!!
 
 * Make script that will restart server within screen session
