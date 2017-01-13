@@ -55,6 +55,8 @@ app.use(authUser);
 
 //this hosts the files located in the ./public directory
 app.use(express.static(__dirname + '/public'));
+app.use('/js', express.static(__dirname + '/node_modules/bootstrap/dist/js'));
+app.use('/style', express.static(__dirname + '/node_modules/bootstrap/dist/css'));
 
 // variables
 const saltRounds = 5;
