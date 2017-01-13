@@ -87,10 +87,7 @@ app.post('/login', function(req, res){
 		} else if (rows.length == 0) {
 			// no email exists
 			logger("Login Error: Invalid Email");
-			res.send({
-				success: false,
-				msg: "Invalid credentials."
-			});
+			res.redirect('/login?error=credentials');
 		} else { 
 			var hash = rows[0].password;
 			var id = rows[0].id;
@@ -102,10 +99,7 @@ app.post('/login', function(req, res){
 					res.status(500).send(err);
 				} else if (!success) {
 					logger("Login Error: Incorrect Password");
-					res.send({
-						success: false,
-						msg: "Invalid credentials."
-					});
+					res.redirect('/login?error=credentials');
 				} else {
 					logger("User " + id + " logged in.");
 					req.session.user_id = id;

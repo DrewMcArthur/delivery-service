@@ -2,7 +2,7 @@ h1 {
     font-family: ubuntu;
 }
 .errmsg {
-	font-color: red;
+	color: red;
 	display: none;
 }
 
