@@ -1,3 +1,8 @@
+body {
+	margin: auto;
+	max-width: 768px;
+	width: 100%;
+}
 h1 {
     font-family: ubuntu;
 }

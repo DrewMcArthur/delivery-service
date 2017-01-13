@@ -13,6 +13,15 @@ var io = require('socket.io')(http);
 var bcrypt = require('bcrypt');
 var bodyParser = require('body-parser');
 
+// sql connection info
+var db = mysql.createConnection({
+    host     : 'localhost',
+    user     : 'root',
+    password : 'password',
+    database : 'deliveryapp'
+});
+handleDisconnect(db);
+
 app.use(session({
   secret: 'keyboard doggo pupper',
   resave: false,
@@ -26,17 +35,30 @@ app.use(bodyParser.urlencoded({
 
 app.use(bodyParser.json());
 
+// middleware
+var authUser = function(req, res, next) {
+	// if they're trying to log in, go ahead
+	if (req.url.match(/\/[(login)(info)].*/))
+		// but if they're already logged in, boot them to the homepage
+		if (req.session.user_id)
+			return res.redirect('/');
+		else 
+			return next();
+	// anywhere they try to go, if they aren't logged in,
+	if (!req.session.user_id)
+		// send them to the login page
+		return res.redirect('/login');
+	else
+		return next();
+}
+
+app.use(authUser);
+
+//this hosts the files located in the ./public directory
+app.use(express.static(__dirname + '/public'));
+
 // variables
 const saltRounds = 5;
-
-// sql connection info
-var db = mysql.createConnection({
-    host     : 'localhost',
-    user     : 'root',
-    password : 'password',
-    database : 'deliveryapp'
-});
-handleDisconnect(db);
 
 // communications for user signup
 app.post('/signup', function(req, res){
@@ -109,33 +131,12 @@ app.post('/login', function(req, res){
 		}
 	});
 });
+
 app.get('/logout', function(req, res) {
-	logger("User " + id + " logged out.");
+	logger("User " + req.session.user_id + " logged out.");
 	req.session.user_id = null;
 	res.redirect('/');
 });
-
-// middleware
-var authUser = function(req, res, next) {
-	// if they're trying to log in, go ahead
-	if (req.url.match(/\/login.*/))
-		// but if they're already logged in, boot them to the homepage
-		if (req.session.user_id)
-			return res.redirect('/');
-		else 
-			return next();
-	// anywhere they try to go, if they aren't logged in,
-	if (!req.session.user_id)
-		// send them to the login page
-		return res.redirect('/login');
-	else
-		return next();
-}
-
-app.use(authUser);
-
-//this hosts the files located in the ./public directory
-app.use(express.static(__dirname + '/public'));
 
 //listen for requests at localhost:80
 http.listen(80, function(){ 
@@ -148,7 +149,6 @@ process.on( 'SIGINT', function() {
 	db.end();
 	process.exit( );
 });
-
 
 // functions
 function logger(message){ //log to the console and a hard file
