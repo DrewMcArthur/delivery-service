@@ -6,9 +6,14 @@ block head
 	script(type="text/javascript" src="/js/login.js")
 
 block content
-	h3 Enter your information to log in.
-	form(class='user-login-form' action='/login' method='post')
-		input(class='email' type='email' name='email' placeholder='drewmcarthur1@gmail.com')
-		br
-		input(class='password' type='password' name='password' placeholder='password')
-		input(type='submit' value='Log In')
+	form.form-signin(role='form' action='/login' method='post')
+		h2.form-signin-heading Please sign in
+		input.form-control.email(autofocus='' required='' type='email' name='email' placeholder='drewmcarthur1@gmail.com')
+		input.form-control.password(type='password' required='' name='password' placeholder='password')
+		.container
+			.row
+				div.col-xs-6
+					button.btn.btn-lg.btn-primary.btn-block(type='submit') Log In
+				div.col-xs-6
+					button.btn.btn-lg.btn-primary.btn-block.sign-in-btn-1 Sign In
+				
