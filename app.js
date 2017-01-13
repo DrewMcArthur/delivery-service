@@ -117,13 +117,19 @@ app.get('/logout', function(req, res) {
 
 // middleware
 var authUser = function(req, res, next) {
+	// if they're trying to log in, go ahead
+	if (req.url.match(/\/login.*/))
+		// but if they're already logged in, boot them to the homepage
+		if (req.session.user_id)
+			return res.redirect('/');
+		else 
+			return next();
 	// anywhere they try to go, if they aren't logged in,
-	if (!req.session.user_id) {
+	if (!req.session.user_id)
 		// send them to the login page
 		return res.redirect('/login');
-	} else { 
-		next();
-	}
+	else
+		return next();
 }
 
 app.use(authUser);
