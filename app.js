@@ -76,7 +76,7 @@ app.post('/signup', function(req, res){
 			// sql query to add user with [data] to user table
 			var signupquery = "INSERT INTO user(username, password, email, phone, room) VALUES (";
 			for (var i in data) {
-				signupquery += "'" + mysql.escape(data[i]) + "'";
+				signupquery += mysql.escape(data[i]);
 				signupquery += (i == data.length - 1 ? ");" : ", ");
 			}
 
@@ -103,7 +103,7 @@ app.post('/login', function(req, res){
 	var email = req.body.email;
 	var pass = req.body.password;
 	// get hashed password from database
-	var q = "SELECT id,password FROM user WHERE email='" + mysql.escape(email) + "';";
+	var q = "SELECT id,password FROM user WHERE email=" + mysql.escape(email) + ";";
 	db.query(q, function(err, rows){
 		if (err) {
 			logger("Login Error: ");
@@ -112,7 +112,7 @@ app.post('/login', function(req, res){
 		} else if (rows.length == 0) {
 			// no email exists
 			logger("Login Error: Invalid Email");
-			res.redirect('/login?error=credentials');
+			res.json({result:'error'});
 		} else { 
 			var hash = rows[0].password;
 			var id = rows[0].id;
@@ -122,13 +122,13 @@ app.post('/login', function(req, res){
 					logger("Login Error: ");
 					logger("    " + err);
 					res.status(500).send(err);
-				} else if (!success) {
-					logger("Login Error: Incorrect Password");
-					res.redirect('/login?error=credentials');
-				} else {
-					logger("User " + id + " logged in.");
-					req.session.user_id = id;
+				} else if (success) {
+					logger("User " + id + (success ? " logged in." : " failed logging in."));
+					req.session.user_id = success ? id : null;
 					res.redirect('/');
+				} else {
+					logger("Login Error: Incorrect Password");
+					res.json({result:'error'});
 				}
 			});
 		}
@@ -141,20 +141,12 @@ app.get('/logout', function(req, res) {
 	res.redirect('/');
 });
 
-app.get('/login/:error', function(req, res) {
-	console.log(JSON.stringify(req.params));
-	res.render('login');
-});
-/*
 app.get(/\/[(login)(info)]/, function(req, res) {
 	var uri = req.url.substr(1);
 	if (uri.match(/.*\//))
 		uri = uri.substr(0, uri.length -1);
-	console.log(req.url);
-	console.log(req.params.toString());
-	res.render(uri, {title: uri, error: req.params.error});
+	res.render(uri, {title: uri});
 });
-*/
 
 //listen for requests at localhost:80
 http.listen(80, function(){ 
@@ -184,7 +176,7 @@ function handleDisconnect(db){
 	// The server is either down or restarting (takes a while sometimes).
 	db.connect(function(err) {              
 		if(err) {                                     
-			logger(serverMessage('error when connecting to db:'+ err));
+			logger('Error when connecting to db: '+ err);
 			// We introduce a delay before attempting to reconnect,
 			setTimeout(handleDisconnect, 2000); 
 			// to avoid a hot loop, and to allow our node script to
@@ -193,7 +185,7 @@ function handleDisconnect(db){
 	});                                     
 	// If you're also serving http, display a 503 error.
 	db.on('error', function(err) {
-		logger(serverMessage('db error', err));
+		logger('db error: ', err);
 		// Connection to the MySQL server is usually
 		if(err.code === 'PROTOCOL_CONNECTION_LOST') { 
 			// lost due to either server restart, or a
