@@ -215,10 +215,7 @@ $(document).on('ready', function(){
 		$.ajax({
 			type: "POST",
 			url: '/signup',
-			data: $('.page3 form.form-login').serialize(),
-			success: function() {
-				window.location.replace('/home');
-			}
+			data: $('.page3 form.form-login').serialize()
 		});
 		// prevent new page from loading
 		return false;

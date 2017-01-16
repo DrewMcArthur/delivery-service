@@ -37,7 +37,7 @@ app.use(bodyParser.json());
 // middleware
 var authUser = function(req, res, next) {
 	// anywhere they try to go, if they aren't logged in,
-	if (!req.url.match(/\/[(login)(info)].*/) && !req.session.user_id) {
+	if (!req.url.match(/\/[(login)(signup)(info)].*/) && !req.session.user_id) {
 		logger('User not logged in, redirecting from ' + req.url + ' to /login.');
 		// send them to the login page
 		return res.redirect('/login');
@@ -68,10 +68,10 @@ app.post('/signup', function(req, res){
 			data.password = hash;
 
 			// sql query to add user with [data] to user table
-			var signupquery = "INSERT INTO user(username, password, email, phone, room) VALUES (";
+			var signupquery = "INSERT INTO user(email, password, name, phone, room) VALUES (";
 			for (var i in data) {
 				signupquery += mysql.escape(data[i]);
-				signupquery += (i == data.length - 1 ? ");" : ", ");
+				signupquery += (i == 'room' ? ");" : ", ");
 			}
 
 			logger("Adding new user to database with query: ");
@@ -83,7 +83,7 @@ app.post('/signup', function(req, res){
 					req.session.user_id = rows.insertId;
 					logger("Signup Success: ");
 					logger(rows.insertId);
-					res.redirect('/');
+					res.redirect('/home');
 				} else {
 					// if there was an error signing the user up, forward the error to the client
 					logger("Signup Error: Database Error: " + err);
@@ -93,6 +93,7 @@ app.post('/signup', function(req, res){
 		}
 	});
 });
+
 app.post('/login', function(req, res){
 	var email = req.body.email;
 	var pass = req.body.password;
