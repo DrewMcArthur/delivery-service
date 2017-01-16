@@ -16,8 +16,11 @@ $(document).on('ready', function(){
 		return false;
 	});
 });
-/*
-				var errormess = "<p class='has-error'>Invalid login, please try again.</p>";
-				$('input.password').after(errormess);
-				$('input.password').focus();
-*/
+
+var wrongPassword = function(){
+	var errormess = "<p class='has-error errmsg'>Invalid login, please try again.</p>";
+	if ($('p.errmsg').length == 0)
+		$('input.password').after(errormess);
+	$('input.password').effect('bounce', 'slow');
+	$('input.password').select();
+}

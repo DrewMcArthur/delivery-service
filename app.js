@@ -112,7 +112,7 @@ app.post('/login', function(req, res){
 		} else if (rows.length == 0) {
 			// no email exists
 			logger("Login Error: Invalid Email");
-			res.json({result:'error'});
+			res.end('error');
 		} else { 
 			var hash = rows[0].password;
 			var id = rows[0].id;
@@ -128,7 +128,7 @@ app.post('/login', function(req, res){
 					res.redirect('/');
 				} else {
 					logger("Login Error: Incorrect Password");
-					res.json({result:'error'});
+					res.end('error');
 				}
 			});
 		}
@@ -139,6 +139,13 @@ app.get('/logout', function(req, res) {
 	logger("User " + req.session.user_id + " logged out.");
 	req.session.user_id = null;
 	res.redirect('/');
+});
+
+app.get('/home', function(req, res) {
+		res.render('index');
+});
+app.get('/', function(req, res) {
+	res.redirect('/home');
 });
 
 app.get(/\/[(login)(info)]/, function(req, res) {
