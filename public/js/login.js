@@ -8,10 +8,11 @@ $(document).on('ready', function(){
 	});
 */
 	$(document).on('click', '.login-form.container button.login-btn', function(){
+		console.log('sending in ajax post thing now, we just clicked login');
 		$.ajax({
 			type: "POST",
 			url: '/login',
-			data: $('.form-loginin').serialize(),
+			data: $('.form-login').serialize(),
 			success: function(res) {
 				if (res == 'error') {
 					var errormess = "<p class='has-error errmsg pass'>Invalid login, please try again.</p>";
@@ -69,8 +70,11 @@ $(document).on('ready', function(){
 	});
 
 	$(document).on('click', 'button.next-btn', function(){
+	/* * * * * * * * * * * * * * * * * * * * * * * * * 
+	 *  Input Error Checking on Sign Up (First page) *
+	 * * * * * * * * * * * * * * * * * * * * * * * * */
+		// Error: Bad Email
 		if (!$('.email').val().match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)) {
-			// Error: Bad Email
 			var errormess = "<p class='has-error errmsg email'>Invalid Email.</p>";
 			if ($('p.email.errmsg').length == 0)
 				$('input.email').after(errormess);
@@ -85,22 +89,24 @@ $(document).on('ready', function(){
 				$('.errmsg.email').remove();
 			});
 		}
+
+		// Error: No password
 		if ($('.pass1').val().length < 5) {
-			// Error: No password
 			var errormess = "<p class='has-error errmsg pass'>Invalid password, please try again.</p>";
 			if ($('p.pass.errmsg').length == 0)
 				$('input.pass1').after(errormess);
 			$('.pass.errmsg').slideDown(70);
+			$('input.pass1').select();
 			setTimeout(function(){
 				$('input.pass1').effect('bounce', 'slow');
 			}, 100);
-			$('input.pass1').select();
 			return false;
 		} else {
 			$('.errmsg.pass').slideUp(70, function(){
 				$('.errmsg.pass').remove();
 			});
 		}
+
 		if ($('.pass1').val() != $('.pass2').val()) {
 			// Error: Mismatched Passwords
 			var errormess = "<p class='has-error errmsg pass-match'>Mismatched Passwords, please try again.</p>";
@@ -117,6 +123,22 @@ $(document).on('ready', function(){
 				$('.errmsg.pass-match').remove();
 			});
 		}
-		console.log('No errors yay!');
+
+	/* * * * * * * * * * * * *
+	 * Moving to Second Page *
+	 * * * * * * * * * * * * */
+		// TODO
+		//	Unhide second page (slide current out and next in)
+		//		has name and phone number
+		//		label with sentence under phone saying
+		//			"Entering your number is optional, but facilitates communication."
+		//		error checking on phone number
+		//	unhide third page
+		//		room number option, delivery warning (in yellow?) venmo notice
+		//	unhide fourth page
+		//		summary of person's details, everything getting submitted
+		//		serialize form1 + serialize form2? 
+		//		then parse and display (have to seriliaze it all together anyways to submit)
+		//		submit button with post to /signup
 	});
 });

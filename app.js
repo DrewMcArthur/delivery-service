@@ -98,6 +98,8 @@ app.post('/login', function(req, res){
 	var pass = req.body.password;
 	// get hashed password from database
 	var q = "SELECT id,password FROM user WHERE email=" + mysql.escape(email) + ";";
+	logger("Searching for user email with query:");
+	logger("    " + q);
 	db.query(q, function(err, rows){
 		if (err) {
 			logger("Login Error: ");
