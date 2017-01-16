@@ -1,3 +1,12 @@
-h1 {
-	font-family: Times New Roman;
+input {
+	margin-bottom: 15px;
+}
+.login-btns {
+	padding: 5px;
+}
+.sign-in-header {
+	text-align: center;
+}
+.has-error {
+	color: #AB3C3C;
 }
