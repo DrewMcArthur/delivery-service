@@ -69,16 +69,35 @@ $(document).on('ready', function(){
 	});
 
 	$(document).on('click', 'button.next-btn', function(){
+		if (!$('.email').val().match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)) {
+			// Error: Bad Email
+			var errormess = "<p class='has-error errmsg email'>Invalid Email.</p>";
+			if ($('p.email.errmsg').length == 0)
+				$('input.email').after(errormess);
+			$('.errmsg').slideDown(70);
+			$('.email').select();
+			setTimeout(function(){
+				$('input.email').effect('bounce', 'slow');
+			}, 100);
+			return false;
+		} else {
+			$('.errmsg.email').slideUp(70, function(){
+				$('.errmsg.email').remove();
+			});
+		}
 		if ($('.pass1').val().length < 5) {
 			// Error: No password
 			var errormess = "<p class='has-error errmsg pass'>Invalid password, please try again.</p>";
 			if ($('p.pass.errmsg').length == 0)
 				$('input.pass1').after(errormess);
 			$('.pass.errmsg').slideDown(70);
-			$('input.pass1').effect('bounce', 'slow');
+			setTimeout(function(){
+				$('input.pass1').effect('bounce', 'slow');
+			}, 100);
 			$('input.pass1').select();
+			return false;
 		} else {
-			$('.errmsg.pass').slideUp('fast', function(){
+			$('.errmsg.pass').slideUp(70, function(){
 				$('.errmsg.pass').remove();
 			});
 		}
@@ -89,24 +108,15 @@ $(document).on('ready', function(){
 				$('input.pass2').after(errormess);
 			$('.errmsg').slideDown(70);
 			$('.pass2').select();
-			$('input.password').effect('bounce', 'slow');
+			setTimeout(function(){
+				$('input.password').effect('bounce', 'slow');
+			}, 100);
+			return false;
 		} else {
-			$('.errmsg.pass-match').slideUp('fast', function(){
+			$('.errmsg.pass-match').slideUp(70, function(){
 				$('.errmsg.pass-match').remove();
 			});
 		}
-		if (!$('.email').val().match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)) {
-			// Error: Bad Email
-			var errormess = "<p class='has-error errmsg email'>Invalid Email.</p>";
-			if ($('p.email.errmsg').length == 0)
-				$('input.email').after(errormess);
-			$('.errmsg').slideDown(70);
-			$('.email').select();
-			$('input.email').effect('bounce', 'slow');
-		} else {
-			$('.errmsg.email').slideUp('fast', function(){
-				$('.errmsg.email').remove();
-			});
-		}
+		console.log('No errors yay!');
 	});
 });
