@@ -83,7 +83,7 @@ app.post('/signup', function(req, res){
 					req.session.user_id = rows.insertId;
 					logger("Signup Success: ");
 					logger(rows.insertId);
-					res.redirect('/home');
+					res.end('success');
 				} else {
 					// if there was an error signing the user up, forward the error to the client
 					logger("Signup Error: Database Error: " + err);

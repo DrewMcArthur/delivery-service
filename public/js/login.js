@@ -215,10 +215,11 @@ $(document).on('ready', function(){
 		$.ajax({
 			type: "POST",
 			url: '/signup',
-			data: $('.page3 form.form-login').serialize()
+			data: $('.page3 form.form-login').serialize(),
+			success: function() {
+				window.location.replace('/home');
+			}
 		});
-		// prevent new page from loading
-		return false;
 	});
 	$(document).on('click', '.page3 form.form-login', function(){
 		$('.page3 p.help').effect('bounce', 'slow');
