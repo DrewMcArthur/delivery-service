@@ -36,18 +36,12 @@ app.use(bodyParser.json());
 
 // middleware
 var authUser = function(req, res, next) {
-	// if they're trying to log in, go ahead
-	if (req.url.match(/\/[(login)(info)].*/))
-		// but if they're already logged in, boot them to the homepage
-		if (req.session.user_id)
-			return res.redirect('/');
-		else 
-			return next();
 	// anywhere they try to go, if they aren't logged in,
-	if (!req.session.user_id)
+	if (!req.url.match(/\/[(login)(info)].*/) && !req.session.user_id) {
+		logger('User not logged in, redirecting from ' + req.url + ' to /login.');
 		// send them to the login page
 		return res.redirect('/login');
-	else
+	} else
 		return next();
 }
 app.use(authUser);
