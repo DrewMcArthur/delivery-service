@@ -1,12 +1,30 @@
-input {
+input.form-control {
 	margin-bottom: 15px;
+	border-top-width: 0;
+	border-left-width: 0;
+	border-right-width: 0;
+	border-radius: 0;
+	box-shadow: none;
+}
+input.form-control:focus {
+	box-shadow: none;
+}
+label {
+	font-weight: 300;
+	font-size: 13px;
+	color: darkgray;
 }
 .login-btns {
 	padding: 5px;
 }
+button.login-btn {
+	border-radius: 5px;
+}
 .sign-in-header {
 	text-align: center;
+	margin-bottom: 35px;
 }
 .has-error {
 	color: #AB3C3C;
+	display:none;
 }

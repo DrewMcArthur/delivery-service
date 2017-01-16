@@ -1,26 +1,112 @@
 $(document).on('ready', function(){
-	$('.form-signin').on('submit',function(){
+
+/* trying to get label change color on focus
+	$('input').on('focus', function(){
+		$("label[for='"+ $(this).attr('name') +"']").css('color', '#91C4ED');
+	}, function() {
+		$("label[for='"+ $(this).attr('name') +"']").css('color', 'darkgray');
+	});
+*/
+	$(document).on('click', '.login-form.container button.login-btn', function(){
 		$.ajax({
 			type: "POST",
 			url: '/login',
-			data: $('.form-signin').serialize(),
+			data: $('.form-loginin').serialize(),
 			success: function(res) {
-				if (res == 'error')
-					wrongPassword();
-				else
+				if (res == 'error') {
+					var errormess = "<p class='has-error errmsg pass'>Invalid login, please try again.</p>";
+					if ($('p.pass.errmsg').length == 0)
+						$('input.password').after(errormess);
+					$('.errmsg').slideDown(70);
+					$('input.password').effect('bounce', 'slow');
+					$('input.password').select();
+				} else
 					window.location.replace('/');
 			}
 		});
-	
 		// prevent new page from loading
 		return false;
 	});
-});
 
-var wrongPassword = function(){
-	var errormess = "<p class='has-error errmsg'>Invalid login, please try again.</p>";
-	if ($('p.errmsg').length == 0)
-		$('input.password').after(errormess);
-	$('input.password').effect('bounce', 'slow');
-	$('input.password').select();
-}
+	$(document).on('click', 'button.signup-btn', function(){
+		var pass2 = "<label for='pass2'>confirm password</label><input style='display:none' class='form-control password pass2' type='password' name='pass2'></input>"
+
+		$('.errmsg').slideUp('fast', function(){
+			$('.errmsg').remove();
+		});
+
+		$('input.password').addClass('pass1');
+		$('input.pass1').after(pass2);
+		$('input.pass2').slideDown('fast');
+
+		$('.login-btn').addClass('cancel-btn');
+		$('.login-btn').removeClass('login-btn');
+		$('button.cancel-btn').html('Cancel');
+
+		$('.signup-btn').addClass('next-btn');
+		$('.signup-btn').removeClass('signup-btn');
+		$('button.next-btn').html('Next');
+	});
+
+	$(document).on('click', 'button.cancel-btn', function() {
+		$('.errmsg').slideUp('fast', function(){
+			$('.errmsg').remove();
+		});
+		$('input.pass2').slideUp('fast', function(){
+			$('input.pass2').remove();
+		});
+		$('label[for="pass2"]').slideUp('fast', function(){
+			$('label[for="pass2"]').remove();
+		});
+
+		$('.cancel-btn').addClass('login-btn');
+		$('.cancel-btn').removeClass('cancel-btn');
+		$('button.login-btn').html('Log In');
+
+		$('.next-btn').addClass('signup-btn');
+		$('.next-btn').removeClass('next-btn');
+		$('button.signup-btn').html('Sign Up');
+	});
+
+	$(document).on('click', 'button.next-btn', function(){
+		if ($('.pass1').val().length < 5) {
+			// Error: No password
+			var errormess = "<p class='has-error errmsg pass'>Invalid password, please try again.</p>";
+			if ($('p.pass.errmsg').length == 0)
+				$('input.pass1').after(errormess);
+			$('.pass.errmsg').slideDown(70);
+			$('input.pass1').effect('bounce', 'slow');
+			$('input.pass1').select();
+		} else {
+			$('.errmsg.pass').slideUp('fast', function(){
+				$('.errmsg.pass').remove();
+			});
+		}
+		if ($('.pass1').val() != $('.pass2').val()) {
+			// Error: Mismatched Passwords
+			var errormess = "<p class='has-error errmsg pass-match'>Mismatched Passwords, please try again.</p>";
+			if ($('p.pass-match.errmsg').length == 0)
+				$('input.pass2').after(errormess);
+			$('.errmsg').slideDown(70);
+			$('.pass2').select();
+			$('input.password').effect('bounce', 'slow');
+		} else {
+			$('.errmsg.pass-match').slideUp('fast', function(){
+				$('.errmsg.pass-match').remove();
+			});
+		}
+		if (!$('.email').val().match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)) {
+			// Error: Bad Email
+			var errormess = "<p class='has-error errmsg email'>Invalid Email.</p>";
+			if ($('p.email.errmsg').length == 0)
+				$('input.email').after(errormess);
+			$('.errmsg').slideDown(70);
+			$('.email').select();
+			$('input.email').effect('bounce', 'slow');
+		} else {
+			$('.errmsg.email').slideUp('fast', function(){
+				$('.errmsg.email').remove();
+			});
+		}
+	});
+});
