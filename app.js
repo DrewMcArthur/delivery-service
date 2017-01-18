@@ -12,14 +12,7 @@ var mysql = require('mysql');
 var bcrypt = require('bcrypt');
 var bodyParser = require('body-parser');
 
-// sql connection info
-var db = mysql.createConnection({
-    host     : 'localhost',
-    user     : 'root',
-    password : 'password',
-    database : 'deliveryapp'
-});
-handleDisconnect(db);
+handleDisconnect();
 
 app.use(session({
   secret: 'keyboard doggo pupper',
@@ -176,7 +169,15 @@ function logger(message){ //log to the console and a hard file
 		}
 	);
 }
-function handleDisconnect(db){
+function handleDisconnect(){
+	// sql connection info
+	var db = mysql.createConnection({
+		host     : 'localhost',
+		user     : 'root',
+		password : 'password',
+		database : 'deliveryapp'
+	});
+
 	// The server is either down or restarting (takes a while sometimes).
 	db.connect(function(err) {              
 		if(err) {                                     
