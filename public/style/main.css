@@ -1,7 +1,5 @@
-body {
-	margin: auto;
-	max-width: 768px;
-	width: 100%;
+.container {
+	max-width: 450px;
 }
 h1 {
     font-family: ubuntu;
