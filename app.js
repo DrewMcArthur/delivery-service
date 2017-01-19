@@ -11,16 +11,13 @@ var http = require('http').Server(app);
 var mysql = require('mysql');
 var bcrypt = require('bcrypt');
 var bodyParser = require('body-parser');
-var db; // the database object
+var util = require('util');
+var config = require('./config');
+var db = config.db; // the database object
 
 handleDisconnect();
 
-app.use(session({
-  secret: 'keyboard doggo pupper',
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false } // change this once i get HTTPS running
-}));
+app.use(config.session);
 
 app.use(bodyParser.urlencoded({
     extended: true
@@ -181,7 +178,7 @@ function logger(message){ //log to the console and a hard file
 	console.log(message);
 	fs.appendFile(
 		__dirname + "/messages.log", 
-		new Date().toUTCString() + "	" + message.toString() + "\n", 
+		new Date().toUTCString() + "	" + util.inspect(message) + "\n", 
 		function(err){ 
 			if(err) { console.log(err); } 
 		}
@@ -189,13 +186,7 @@ function logger(message){ //log to the console and a hard file
 }
 function handleDisconnect(){
 	// sql connection info
-	db = mysql.createConnection({
-		host     : 'localhost',
-		user     : 'root',
-		password : 'password',
-		database : 'deliveryapp'
-	});
-
+	db = config.db;
 	// The server is either down or restarting (takes a while sometimes).
 	db.connect(function(err) {              
 		if(err) {                                     
