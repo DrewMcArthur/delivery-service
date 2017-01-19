@@ -9,7 +9,6 @@ input.form-control {
 input.form-control:focus {
 	box-shadow: none;
 }
-
 label {
 	font-weight: 300;
 	font-size: 13px;
@@ -49,7 +48,7 @@ span.for-room.help {
 	color: #AB3C3C;
 	display: none;
 }
-#forgot-pw,
+#forgot-pw, div.pass2,
 .page2, .page3, .page4 {
 	display: none;
 }

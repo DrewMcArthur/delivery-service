@@ -24,8 +24,7 @@ $(document).on('ready', function(){
 	$(document).on('click', 'button.signup-btn', function(){
 		$('.errmsg').slideUp('fast');
 
-		$('label[for="pass2"]').slideDown('fast');
-		$('input.pass2').slideDown('fast');
+		$('div.pass2').slideDown('fast');
 
 		$('.login-btn').addClass('cancel-btn');
 		$('.login-btn').removeClass('login-btn');
@@ -38,8 +37,7 @@ $(document).on('ready', function(){
 
 	$(document).on('click', 'button.cancel-btn', function() {
 		$('.errmsg').slideUp('fast');
-		$('input.pass2').slideUp('fast');
-		$('label[for="pass2"]').slideUp('fast');
+		$('div.pass2').slideUp('fast');
 
 		$('.cancel-btn').addClass('login-btn');
 		$('.cancel-btn').removeClass('cancel-btn');
