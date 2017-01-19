@@ -14,7 +14,7 @@ module.exports = {
 		database : 'deliveryapp'
 	}),
 	session: session({
-		secret: 'keyboard doggo pupper',
+		secret: 'secret',
 		resave: false,
 		saveUninitialized: true,
 		cookie: { secure: false } // change this once i get HTTPS running
