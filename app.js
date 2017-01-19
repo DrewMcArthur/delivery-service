@@ -167,11 +167,13 @@ http.listen(80, function(){
 });
 
 // handles when i stop server by CTRL-C
-process.on( 'SIGINT', function() {
-	logger( "\nGracefully shutting down from SIGINT (Ctrl-C)" );
+process.on('SIGINT', shutdown);
+process.on('exit', shutdown);
+var shutdown = function(){
+	logger( "\nGracefully shutting down." );
 	db.end();
-	process.exit( );
-});
+	process.exit();
+}
 
 // functions
 function logger(message){ //log to the console and a hard file
@@ -187,6 +189,8 @@ function logger(message){ //log to the console and a hard file
 function handleDisconnect(){
 	// sql connection info
 	db = config.db;
+	// clean up test data
+	db.query('DELETE FROM user WHERE name="test";');
 	// The server is either down or restarting (takes a while sometimes).
 	db.connect(function(err) {              
 		if(err) {                                     
