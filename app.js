@@ -15,8 +15,6 @@ var util = require('util');
 var config = require('./config');
 var db = config.db; // the database object
 
-handleDisconnect();
-
 app.use(config.session);
 
 app.use(bodyParser.urlencoded({
@@ -167,13 +165,11 @@ http.listen(80, function(){
 });
 
 // handles when i stop server by CTRL-C
-process.on('SIGINT', shutdown);
-process.on('exit', shutdown);
-var shutdown = function(){
+process.on('SIGINT', function(){
 	logger( "\nGracefully shutting down." );
 	db.end();
 	process.exit();
-}
+});
 
 // functions
 function logger(message){ //log to the console and a hard file
@@ -185,32 +181,4 @@ function logger(message){ //log to the console and a hard file
 			if(err) { console.log(err); } 
 		}
 	);
-}
-function handleDisconnect(){
-	// sql connection info
-	db = config.db;
-	// clean up test data
-	db.query('DELETE FROM user WHERE name="test";');
-	// The server is either down or restarting (takes a while sometimes).
-	db.connect(function(err) {              
-		if(err) {                                     
-			logger('Error when connecting to db: '+ err);
-			// We introduce a delay before attempting to reconnect,
-			setTimeout(handleDisconnect.bind(null, db), 2000); 
-			// to avoid a hot loop, and to allow our node script to
-		}                                     
-	// process asynchronous requests in the meantime.
-	});                                     
-	// If you're also serving http, display a 503 error.
-	db.on('error', function(err) {
-		logger('db error: ', err);
-		// Connection to the MySQL server is usually
-		if(err.code === 'PROTOCOL_CONNECTION_LOST') { 
-			// lost due to either server restart, or a
-			handleDisconnect(db);
-			// connnection idle timeout (the wait_timeout server variable configures this)
-		} else {                                      
-			throw err;                                  
-		}
-	});
 }
