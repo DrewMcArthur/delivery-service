@@ -22,14 +22,9 @@ $(document).on('ready', function(){
 	});
 
 	$(document).on('click', 'button.signup-btn', function(){
-		var pass2 = "<label class='pass2' for='pass2'>confirm password</label><input style='display:none' class='form-control password pass2' type='password' name='pass2'></input>"
+		$('.errmsg').slideUp('fast');
 
-		$('.errmsg').slideUp('fast', function(){
-			$('.errmsg').remove();
-		});
-
-		$('input.password').addClass('pass1');
-		$('input.pass1').after(pass2);
+		$('label[for="pass2"]').slideDown('fast');
 		$('input.pass2').slideDown('fast');
 
 		$('.login-btn').addClass('cancel-btn');
@@ -42,15 +37,9 @@ $(document).on('ready', function(){
 	});
 
 	$(document).on('click', 'button.cancel-btn', function() {
-		$('.errmsg').slideUp('fast', function(){
-			$('.errmsg').remove();
-		});
-		$('input.pass2').slideUp('fast', function(){
-			$('input.pass2').remove();
-		});
-		$('label[for="pass2"]').slideUp('fast', function(){
-			$('label[for="pass2"]').remove();
-		});
+		$('.errmsg').slideUp('fast');
+		$('input.pass2').slideUp('fast');
+		$('label[for="pass2"]').slideUp('fast');
 
 		$('.cancel-btn').addClass('login-btn');
 		$('.cancel-btn').removeClass('cancel-btn');
@@ -67,74 +56,69 @@ $(document).on('ready', function(){
 	 * * * * * * * * * * * * * * * * * * * * * * * * */
 		// Error: Bad Email
 		if (!$('input.email').val().match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)) {
-			var errormess = "<p class='has-error errmsg email'>Invalid Email.</p>";
-			if ($('p.email.errmsg').length == 0)
-				$('input.email').after(errormess);
-			$('.errmsg').slideDown(70);
-			$('.email').select();
+			$('.email.errmsg').slideDown(70);
+			$('input.email').select();
 			setTimeout(function(){
 				$('input.email').effect('bounce', 'slow');
 			}, 100);
 			return false;
 		} else {
-			$('.errmsg.email').slideUp(70, function(){
-				$('.errmsg.email').remove();
-			});
+			$('.errmsg.email').slideUp(70);
 		}
 
-		// Error: No password
-		if ($('input.pass1').val().length < 5) {
-			var errormess = "<p class='has-error errmsg pass'>Invalid password, please try again.</p>";
-			if ($('p.pass.errmsg').length == 0)
-				$('input.pass1').after(errormess);
-			$('.pass.errmsg').slideDown(70);
-			$('input.pass1').select();
-			setTimeout(function(){
-				$('input.pass1').effect('bounce', 'slow');
-			}, 100);
-			return false;
-		} else {
-			$('.errmsg.pass').slideUp(70, function(){
-				$('.errmsg.pass').remove();
-			});
-		}
-
-		if ($('input.pass1').val() != $('input.pass2').val()) {
-			// Error: Mismatched Passwords
-			var errormess = "<p class='has-error errmsg pass-match'>Mismatched Passwords, please try again.</p>";
-			if ($('p.pass-match.errmsg').length == 0)
-				$('input.pass2').after(errormess);
-			$('.errmsg').slideDown(70);
-			$('.pass2').select();
-			setTimeout(function(){
-				$('input.password').effect('bounce', 'slow');
-			}, 100);
-			return false;
-		} else {
-			$('.errmsg.pass-match').slideUp(70, function(){
-				$('.errmsg.pass-match').remove();
-			});
-		}
-
-		signupData.update($('.page1 form.form-login').serializeArray()
-													.filter(function(item){
-			return item.name != 'pass2';
-		}));
+		// Check if email exists already
+		$.ajax({
+			type:'POST',
+			url: '/signup/findemail',
+			data: {email: $('input.email').val()},
+			success: function(res) {
+				if (res == 'found') {
+					$('.dup-email.errmsg').slideDown(70);
+					$('.email').select();
+					setTimeout(function(){
+						$('input.email').effect('bounce', 'slow');
+					}, 100);
+					return false;
+				} else { 
+					$('.errmsg.dup-email').slideUp(70);
 		
-		$('.signup-form.page1').hide('slide', {direction: 'left'}, 200, 
-			function() {
-				$('.signup-form.page2').show('slide', {direction: 'right'}, 200);
-				$('input.name').select();
-			});
+					// Error: No password
+					if ($('input.pass1').val().length < 5) {
+						$('.pass.errmsg').slideDown(70);
+						$('input.pass1').select();
+						setTimeout(function(){
+							$('input.pass1').effect('bounce', 'slow');
+						}, 100);
+						return false;
+					} else {
+						$('.errmsg.pass').slideUp(70);
+					}
 
+					if ($('input.pass1').val() != $('input.pass2').val()) {
+						// Error: Mismatched Passwords
+						$('.errmsg.pass-match').slideDown(70);
+						$('.pass2').select();
+						setTimeout(function(){
+							$('input.password').effect('bounce', 'slow');
+						}, 100);
+						return false;
+					} else {
+						$('.errmsg.pass-match').slideUp(70);
+					}
 
-		// TODO
-		//		room number option, delivery warning (in yellow?) venmo notice
-		//	unhide fourth page
-		//		summary of person's details, everything getting submitted
-		//		serialize form1 + serialize form2? 
-		//		then parse and display (have to seriliaze it all together anyways to submit)
-		//		submit button with post to /signup
+					signupData.update($('.page1 form.form-login').serializeArray()
+																.filter(function(item){
+						return item.name != 'pass2';
+					}));
+					
+					$('.signup-form.page1').hide('slide', {direction: 'left'}, 200, 
+						function() {
+							$('.signup-form.page2').show('slide', {direction: 'right'}, 200);
+							$('input.name').select();
+						});
+				}
+			}
+		});
 	});
 
 	/* * * * * * * * * * * * * * * *
@@ -152,28 +136,20 @@ $(document).on('ready', function(){
 		// ensure name not blank
 		if ($('input.name').val().length == 0){
 			// Error: Name Field Empty
-			var errormess = "<p class='has-error errmsg name'>Name is required, please try again.</p>";
-			if ($('p.name.errmsg').length == 0)
-				$('input.name').after(errormess);
 			$('p.name.errmsg').slideDown(70);
-			$('.name').select();
+			$('input.name').select();
 			setTimeout(function(){
 				$('input.name').effect('bounce', 'slow');
 			}, 100);
 			return false;
 		} else {
-			$('.errmsg.name').slideUp(70, function(){
-				$('.errmsg.name').remove();
-			});
+			$('.errmsg.name').slideUp(70);
 		}
 		// error check on phone number
 		$('input.phone').val($('input.phone').val().replace(/\D/g, ""));
 		var len = $('input.phone').val().length;
 		if ( len != 10 && len != 11 && len != 0) {
 			// Error: Bad Phone Number
-			var errormess = "<p class='has-error errmsg phone'>Invalid phone number, please try again.</p>";
-			if ($('p.phone.errmsg').length == 0)
-				$('input.phone').after(errormess);
 			$('p.phone.errmsg').slideDown(70);
 			$('.phone').select();
 			setTimeout(function(){
@@ -181,13 +157,9 @@ $(document).on('ready', function(){
 			}, 100);
 			return false;
 		} else {
-			$('.errmsg.pass-match').slideUp(70, function(){
-				$('.errmsg.pass-match').remove();
-			});
+			$('.errmsg.pass-match').slideUp(70);
 		}
 		
-		$('.errmsg').remove();
-
 		// add new data to singupData
 		signupData.update($('.page2 form.form-login').serializeArray());
 
@@ -235,6 +207,13 @@ $(document).on('ready', function(){
 		}
 		$('.page3 .pass2').remove();
 	}
+
+	// forgot password modal
+	$('a.forgot-pw').on('click', function(e){
+		e.preventDefault();
+		console.log('are we even clicking???');
+		$('#forgot-pw').show('fade', 100);
+	});
 
 	// phone help text fading
 	$('input.phone').on('focusin', function(){

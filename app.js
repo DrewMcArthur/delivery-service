@@ -11,6 +11,7 @@ var http = require('http').Server(app);
 var mysql = require('mysql');
 var bcrypt = require('bcrypt');
 var bodyParser = require('body-parser');
+var db; // the database object
 
 handleDisconnect();
 
@@ -125,6 +126,23 @@ app.post('/login', function(req, res){
 	});
 });
 
+app.post('/signup/findemail', function(req, res) {
+	var email = req.body.email;
+	var q = "SELECT id FROM user WHERE email=" + mysql.escape(email) + ";";
+	logger("Searching for user email with query:");
+	logger("    " + q);
+	db.query(q, function(err, rows) {
+		if (err) {
+			logger("Database Error (:136): " + err);
+			res.send(err);
+		} else if (rows.length > 0){
+			res.end('found');
+		} else {
+			res.end('notfound');
+		} 
+	});
+});
+
 app.get('/logout', function(req, res) {
 	logger("User " + req.session.user_id + " logged out.");
 	req.session.user_id = null;
@@ -171,7 +189,7 @@ function logger(message){ //log to the console and a hard file
 }
 function handleDisconnect(){
 	// sql connection info
-	var db = mysql.createConnection({
+	db = mysql.createConnection({
 		host     : 'localhost',
 		user     : 'root',
 		password : 'password',

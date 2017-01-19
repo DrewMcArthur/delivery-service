@@ -45,10 +45,11 @@ span.for-room.help {
 	text-align: center;
 	margin-bottom: 35px;
 }
-.has-error {
+.errmsg, .has-error {
 	color: #AB3C3C;
 	display: none;
 }
+#forgot-pw,
 .page2, .page3, .page4 {
 	display: none;
 }
