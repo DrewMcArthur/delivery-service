@@ -28,10 +28,13 @@ var authUser = function(req, res, next) {
 	// anywhere they try to go, if they aren't logged in,
 	if (!req.url.match(/\/[(login)(signup)(info)].*/) && !req.session.user_id) {
 		logger('User not logged in, redirecting from ' + req.url + ' to /login.');
+		res.locals.loggedIn = function() { return false; }
 		// send them to the login page
 		return res.redirect('/login');
-	} else
+	} else {
+		res.locals.loggedIn = function() { return true; }
 		return next();
+	}
 }
 app.use(authUser);
 

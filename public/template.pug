@@ -7,6 +7,8 @@ html
 			meta placeholder head
 	body
 		include includes/header.pug
+		- if (loggedIn())
+			p User is logged in
 		.container(style='padding-top: 50px')
 			block content
 				div placeholder content
