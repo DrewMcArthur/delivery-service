@@ -7,10 +7,7 @@ $(document).on('ready', function(){
 			data: $('.page1 .form-login').serialize(),
 			success: function(res) {
 				if (res == 'error') {
-					var errormess = "<p class='has-error errmsg pass'>Invalid login, please try again.</p>";
-					if ($('p.pass.errmsg').length == 0)
-						$('input.password').after(errormess);
-					$('.errmsg').slideDown(70);
+					$('.errmsg.login').slideDown(70);
 					$('input.password').effect('bounce', 'slow');
 					$('input.password').select();
 				} else
